@@ -1,19 +1,32 @@
 import React, { Component } from "react";
 
 export default class Board extends Component {
-  state = { squares: [] };
+  state = { squares: [], revealsRemaining: null };
   onClick = (row, column) => {
+    const { revealsRemaining } = this.state;
     const squares = [...this.state.squares];
-    squares[row][column] = "💣";
-    this.setState({ squares });
+    if (squares[row][column].revealed) {
+      return;
+    }
+
+    if (squares[row][column].value !== "💣") {
+      squares[row][column].value = "🅿️";
+    }
+
+    squares[row][column].revealed = true;
+    this.setState({ squares, revealsRemaining: revealsRemaining - 1 });
   };
   componentDidMount() {
     this.randomizeBoard();
   }
   componentDidUpdate({ height: oldHeight, width: oldWidth }) {
     const { height, width } = this.props;
+    const { revealsRemaining } = this.state;
     if (height !== oldHeight || width !== oldWidth) {
-      this.randomizeBoard();
+      return this.randomizeBoard();
+    }
+    if (revealsRemaining === 0) {
+      console.log("you win");
     }
   }
   randomizeBoard() {
@@ -21,16 +34,19 @@ export default class Board extends Component {
 
     const squares = Array(height)
       .fill(null)
-      .map(() => Array(width).fill("◻️"));
-
+      .map(() =>
+        Array(width)
+          .fill(null)
+          .map(() => ({ revealed: false, value: null }))
+      );
     const bombsToPlace = Math.floor(0.15 * height * width);
     for (let i = 0; i < bombsToPlace; i++) {
       const randomRow = Math.floor(Math.random() * height);
       const randomColumn = Math.floor(Math.random() * width);
-      squares[randomRow][randomColumn] = "💣";
+      squares[randomRow][randomColumn].value = "💣";
     }
-
-    this.setState({ squares });
+    const revealsRemaining = height * width - bombsToPlace;
+    this.setState({ squares, revealsRemaining });
   }
   renderSquares() {
     return (
@@ -44,7 +60,7 @@ export default class Board extends Component {
                     key={`${rowIndex}.${columnIndex}`}
                     onClick={() => this.onClick(rowIndex, columnIndex)}
                   >
-                    {square}
+                    {square.revealed ? square.value : "◻️"}
                   </span>
                 );
               })}
