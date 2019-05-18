@@ -5,14 +5,21 @@ export default class Board extends Component {
   state = { squares: [], revealsRemaining: null };
   onClick = (row, column) => {
     const { revealsRemaining } = this.state;
-    const squares = [...this.state.squares];
 
-    if (squares[row][column].revealed) {
+    if (this.state.squares[row][column].revealed) {
       return;
     }
 
-    squares[row][column].revealed = true;
-    this.setState({ squares, revealsRemaining: revealsRemaining - 1 });
+    const { squares, revealCount } = this.revealSelfAndEmptyNeighbors(
+      [...this.state.squares],
+      row,
+      column
+    );
+
+    this.setState({
+      squares,
+      revealsRemaining: revealsRemaining - revealCount
+    });
   };
   componentDidMount() {
     this.randomizeBoard();
@@ -24,7 +31,7 @@ export default class Board extends Component {
       return this.randomizeBoard();
     }
     if (revealsRemaining === 0) {
-      console.log("you win");
+      console.log("you win 😀");
     }
   }
   randomizeBoard() {
@@ -85,6 +92,37 @@ export default class Board extends Component {
         })}
       </ul>
     );
+  }
+  revealSelfAndEmptyNeighbors(squares, row, column, revealCount = 0) {
+    const isEmptySquare = squares[row][column].value === 0;
+    squares[row][column].revealed = true;
+    revealCount += 1;
+    if (isEmptySquare) {
+      for (let x = -1; x <= 1; x++) {
+        for (let y = -1; y <= 1; y++) {
+          const neighborX = column + x;
+          const neighborY = row + y;
+          if (
+            neighborX >= 0 &&
+            neighborX < this.props.width &&
+            neighborY >= 0 &&
+            neighborY < this.props.height &&
+            squares[neighborY][neighborX].value !== "💣" &&
+            !squares[neighborY][neighborX].revealed
+          ) {
+            const result = this.revealSelfAndEmptyNeighbors(
+              squares,
+              neighborY,
+              neighborX,
+              revealCount
+            );
+            squares = result.squares;
+            revealCount = result.revealCount;
+          }
+        }
+      }
+    }
+    return { squares, revealCount };
   }
   render() {
     return <div>{this.renderSquares()}</div>;
