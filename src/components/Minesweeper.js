@@ -4,8 +4,8 @@ import Board from "./Board";
 export default class Minesweeper extends Component {
   state = {
     boardSettings: {
-      height: 10,
-      width: 10
+      height: 8,
+      width: 8
     }
   };
   onButtonClick = (height, width) => {
@@ -19,9 +19,9 @@ export default class Minesweeper extends Component {
         <h1>Minesweeper</h1>
         <main>
           New game:
-          <button onClick={() => this.onButtonClick(10, 10)}>Easy</button>
-          <button onClick={() => this.onButtonClick(20, 20)}>Medium</button>
-          <button onClick={() => this.onButtonClick(30, 60)}>Hard</button>
+          <button onClick={() => this.onButtonClick(8, 8)}>Easy</button>
+          <button onClick={() => this.onButtonClick(16, 16)}>Medium</button>
+          <button onClick={() => this.onButtonClick(24, 24)}>Hard</button>
         </main>
         <Board height={height} width={width} />
       </div>

@@ -22,6 +22,14 @@ export default class Board extends Component {
     const squares = Array(height)
       .fill(null)
       .map(() => Array(width).fill("◻️"));
+
+    const bombsToPlace = Math.floor(0.15 * height * width);
+    for (let i = 0; i < bombsToPlace; i++) {
+      const randomRow = Math.floor(Math.random() * height);
+      const randomColumn = Math.floor(Math.random() * width);
+      squares[randomRow][randomColumn] = "💣";
+    }
+
     this.setState({ squares });
   }
   renderSquares() {
@@ -29,10 +37,13 @@ export default class Board extends Component {
       <ul>
         {this.state.squares.map((row, rowIndex) => {
           return (
-            <li>
+            <li key={rowIndex}>
               {row.map((square, columnIndex) => {
                 return (
-                  <span onClick={() => this.onClick(rowIndex, columnIndex)}>
+                  <span
+                    key={`${rowIndex}.${columnIndex}`}
+                    onClick={() => this.onClick(rowIndex, columnIndex)}
+                  >
                     {square}
                   </span>
                 );
