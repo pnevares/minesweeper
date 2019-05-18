@@ -1,16 +1,14 @@
 import React, { Component } from "react";
+import "./board.css";
 
 export default class Board extends Component {
   state = { squares: [], revealsRemaining: null };
   onClick = (row, column) => {
     const { revealsRemaining } = this.state;
     const squares = [...this.state.squares];
+
     if (squares[row][column].revealed) {
       return;
-    }
-
-    if (squares[row][column].value !== "💣") {
-      squares[row][column].value = "🅿️";
     }
 
     squares[row][column].revealed = true;
@@ -37,35 +35,53 @@ export default class Board extends Component {
       .map(() =>
         Array(width)
           .fill(null)
-          .map(() => ({ revealed: false, value: null }))
+          .map(() => ({ revealed: false, value: 0 }))
       );
-    const bombsToPlace = Math.floor(0.15 * height * width);
-    for (let i = 0; i < bombsToPlace; i++) {
+    const bombs = Math.floor(0.15 * height * width);
+    let bombsPlaced = 0;
+    while (bombsPlaced < bombs) {
       const randomRow = Math.floor(Math.random() * height);
       const randomColumn = Math.floor(Math.random() * width);
+      if (squares[randomRow][randomColumn].value === "💣") {
+        continue;
+      }
+
       squares[randomRow][randomColumn].value = "💣";
+      bombsPlaced += 1;
+
+      for (let x = -1; x <= 1; x++) {
+        for (let y = -1; y <= 1; y++) {
+          const neighborX = randomColumn + x;
+          const neighborY = randomRow + y;
+          if (
+            neighborX >= 0 &&
+            neighborX < width &&
+            neighborY >= 0 &&
+            neighborY < height &&
+            squares[neighborY][neighborX].value !== "💣"
+          ) {
+            squares[neighborY][neighborX].value += 1;
+          }
+        }
+      }
     }
-    const revealsRemaining = height * width - bombsToPlace;
+    const revealsRemaining = height * width - bombsPlaced;
     this.setState({ squares, revealsRemaining });
   }
   renderSquares() {
     return (
       <ul>
         {this.state.squares.map((row, rowIndex) => {
-          return (
-            <li key={rowIndex}>
-              {row.map((square, columnIndex) => {
-                return (
-                  <span
-                    key={`${rowIndex}.${columnIndex}`}
-                    onClick={() => this.onClick(rowIndex, columnIndex)}
-                  >
-                    {square.revealed ? square.value : "◻️"}
-                  </span>
-                );
-              })}
-            </li>
-          );
+          return row.map((square, columnIndex) => {
+            return (
+              <li
+                key={`${rowIndex}.${columnIndex}`}
+                onClick={() => this.onClick(rowIndex, columnIndex)}
+              >
+                {square.revealed ? square.value : "\u00A0"}
+              </li>
+            );
+          });
         })}
       </ul>
     );

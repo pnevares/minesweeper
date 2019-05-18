@@ -1,0 +1,13 @@
+ul {
+  list-style: none;
+  display: grid;
+  width: 200px;
+  grid-template-columns: repeat(8, 1fr);
+}
+
+ul > li {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px dashed #ccc;
+}
