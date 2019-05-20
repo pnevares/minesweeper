@@ -8,23 +8,19 @@ export default class Board extends Component {
       return this.onContextMenu(event, row, column);
     }
 
-    const { revealsRemaining } = this.state;
+    const { revealsRemaining, squares } = this.state;
 
-    if (
-      this.state.squares[row][column].revealed ||
-      this.state.squares[row][column].flagged
-    ) {
+    if (squares[row][column].revealed || squares[row][column].flagged) {
       return;
     }
 
-    const { squares, revealCount } = this.revealSelfAndEmptyNeighbors(
-      [...this.state.squares],
-      row,
-      column
-    );
+    const {
+      squares: newSquares,
+      revealCount
+    } = this.revealSelfAndEmptyNeighbors([...squares], row, column);
 
     this.setState({
-      squares,
+      squares: newSquares,
       revealsRemaining: revealsRemaining - revealCount
     });
   };
