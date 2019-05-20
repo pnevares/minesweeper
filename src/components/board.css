@@ -1,13 +1,40 @@
 ul {
   list-style: none;
   display: grid;
-  width: 200px;
+}
+
+ul.width-8 {
   grid-template-columns: repeat(8, 1fr);
+  width: 320px;
+}
+
+ul.width-16 {
+  grid-template-columns: repeat(16, 1fr);
+  width: 640px;
+}
+
+ul.width-24 {
+  grid-template-columns: repeat(24, 1fr);
+  width: 960px;
 }
 
 ul > li {
   display: flex;
+  height: 40px;
   justify-content: center;
   align-items: center;
   border: 1px dashed #ccc;
+  font-weight: bold;
+}
+
+ul > li.value-1 {
+  color: #00f;
+}
+
+ul > li.value-2 {
+  color: #0f0;
+}
+
+ul > li.value-3 {
+  color: #f00;
 }

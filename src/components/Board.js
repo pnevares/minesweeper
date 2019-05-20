@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import "./board.css";
+import "./Board.css";
 
 export default class Board extends Component {
   state = { squares: [], revealsRemaining: null };
@@ -76,14 +76,16 @@ export default class Board extends Component {
     this.setState({ squares, revealsRemaining });
   }
   renderSquares() {
+    const { width } = this.props;
     return (
-      <ul>
+      <ul className={`width-${width}`}>
         {this.state.squares.map((row, rowIndex) => {
           return row.map((square, columnIndex) => {
             return (
               <li
                 key={`${rowIndex}.${columnIndex}`}
                 onClick={() => this.onClick(rowIndex, columnIndex)}
+                className={`value-${square.value}`}
               >
                 {square.revealed ? square.value : "\u00A0"}
               </li>

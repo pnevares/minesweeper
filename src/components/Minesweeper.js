@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import Board from "./Board";
+import "./Minesweeper.css";
 
 export default class Minesweeper extends Component {
   state = {
