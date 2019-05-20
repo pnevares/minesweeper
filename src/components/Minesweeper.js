@@ -4,16 +4,18 @@ import Board from "./Board";
 export default class Minesweeper extends Component {
   state = {
     boardSettings: {
+      gameId: 0,
       height: 8,
       width: 8
     }
   };
   onButtonClick = (height, width) => {
-    const boardSettings = { height, width };
+    const { gameId } = this.state.boardSettings;
+    const boardSettings = { gameId: gameId + 1, height, width };
     this.setState({ boardSettings });
   };
   render() {
-    const { height, width } = this.state.boardSettings;
+    const { gameId, height, width } = this.state.boardSettings;
     return (
       <div>
         <h1>Minesweeper</h1>
@@ -23,7 +25,7 @@ export default class Minesweeper extends Component {
           <button onClick={() => this.onButtonClick(16, 16)}>Medium</button>
           <button onClick={() => this.onButtonClick(24, 24)}>Hard</button>
         </main>
-        <Board height={height} width={width} />
+        <Board gameId={gameId} height={height} width={width} />
       </div>
     );
   }

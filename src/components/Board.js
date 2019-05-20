@@ -24,10 +24,10 @@ export default class Board extends Component {
   componentDidMount() {
     this.randomizeBoard();
   }
-  componentDidUpdate({ height: oldHeight, width: oldWidth }) {
-    const { height, width } = this.props;
+  componentDidUpdate({ gameId: oldGameId }) {
+    const { gameId } = this.props;
     const { revealsRemaining } = this.state;
-    if (height !== oldHeight || width !== oldWidth) {
+    if (gameId !== oldGameId) {
       return this.randomizeBoard();
     }
     if (revealsRemaining === 0) {
