@@ -85,9 +85,13 @@ export default class Board extends Component {
               <li
                 key={`${rowIndex}.${columnIndex}`}
                 onClick={() => this.onClick(rowIndex, columnIndex)}
-                className={`value-${square.value}`}
+                className={`value-${square.value} ${
+                  square.revealed ? "revealed" : ""
+                }`}
               >
-                {square.revealed ? square.value : "\u00A0"}
+                {square.revealed && square.value !== 0
+                  ? square.value
+                  : "\u00A0"}
               </li>
             );
           });

@@ -23,8 +23,14 @@ ul > li {
   height: 40px;
   justify-content: center;
   align-items: center;
-  border: 1px dashed #ccc;
   font-weight: bold;
+  background-color: #999;
+  border: 1px solid #fff;
+  border-radius: 5px;
+}
+
+ul > li.revealed {
+  background-color: #bbb;
 }
 
 ul > li.value-1 {
