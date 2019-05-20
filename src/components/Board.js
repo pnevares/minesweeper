@@ -3,10 +3,17 @@ import "./Board.css";
 
 export default class Board extends Component {
   state = { squares: [], revealsRemaining: null };
-  onClick = (row, column) => {
+  onClick = (event, row, column) => {
+    if (event.ctrlKey) {
+      return this.onContextMenu(event, row, column);
+    }
+
     const { revealsRemaining } = this.state;
 
-    if (this.state.squares[row][column].revealed) {
+    if (
+      this.state.squares[row][column].revealed ||
+      this.state.squares[row][column].flagged
+    ) {
       return;
     }
 
@@ -20,6 +27,19 @@ export default class Board extends Component {
       squares,
       revealsRemaining: revealsRemaining - revealCount
     });
+  };
+  onContextMenu = (event, row, column) => {
+    event.preventDefault();
+    const squares = [...this.state.squares];
+
+    if (squares[row][column].revealed) {
+      return;
+    }
+
+    const { flagged } = squares[row][column];
+    squares[row][column].flagged = !flagged;
+
+    this.setState({ squares });
   };
   componentDidMount() {
     this.randomizeBoard();
@@ -42,7 +62,7 @@ export default class Board extends Component {
       .map(() =>
         Array(width)
           .fill(null)
-          .map(() => ({ revealed: false, value: 0 }))
+          .map(() => ({ flagged: false, revealed: false, value: 0 }))
       );
     const bombs = Math.floor(0.15 * height * width);
     let bombsPlaced = 0;
@@ -84,13 +104,18 @@ export default class Board extends Component {
             return (
               <li
                 key={`${rowIndex}.${columnIndex}`}
-                onClick={() => this.onClick(rowIndex, columnIndex)}
+                onClick={event => this.onClick(event, rowIndex, columnIndex)}
+                onContextMenu={event =>
+                  this.onContextMenu(event, rowIndex, columnIndex)
+                }
                 className={`value-${square.value} ${
                   square.revealed ? "revealed" : ""
                 }`}
               >
                 {square.revealed && square.value !== 0
                   ? square.value
+                  : square.flagged
+                  ? "🚩"
                   : "\u00A0"}
               </li>
             );
@@ -114,7 +139,8 @@ export default class Board extends Component {
             neighborY >= 0 &&
             neighborY < this.props.height &&
             squares[neighborY][neighborX].value !== "💣" &&
-            !squares[neighborY][neighborX].revealed
+            !squares[neighborY][neighborX].revealed &&
+            !squares[neighborY][neighborX].flagged
           ) {
             const result = this.revealSelfAndEmptyNeighbors(
               squares,
