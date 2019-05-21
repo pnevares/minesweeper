@@ -20,12 +20,12 @@ export default class Minesweeper extends Component {
     return (
       <div>
         <h1>Minesweeper</h1>
-        <main>
+        <nav>
           New game:
           <button onClick={() => this.onButtonClick(8, 8)}>Easy</button>
           <button onClick={() => this.onButtonClick(16, 16)}>Medium</button>
           <button onClick={() => this.onButtonClick(24, 24)}>Hard</button>
-        </main>
+        </nav>
         <Board gameId={gameId} height={height} width={width} />
       </div>
     );

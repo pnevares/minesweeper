@@ -1,36 +1,48 @@
 import React, { Component } from "react";
+import GameStatus from "./GameStatus";
+import Square from "./Square";
 import "./Board.css";
 
 export default class Board extends Component {
-  state = { squares: [], revealsRemaining: null };
+  state = { gameOver: false, revealsRemaining: null, squares: [] };
   onClick = (event, row, column) => {
     if (event.ctrlKey) {
       return this.onContextMenu(event, row, column);
     }
 
-    const { revealsRemaining, squares } = this.state;
+    const { gameOver, revealsRemaining, squares } = this.state;
 
-    if (squares[row][column].revealed || squares[row][column].flagged) {
-      return;
+    if (gameOver) return;
+
+    if (squares[row][column].revealed || squares[row][column].flagged) return;
+
+    if (squares[row][column].value === "💣") {
+      const newSquares = [...squares];
+      newSquares[row][column].revealed = true;
+      return this.setState({ gameOver: true, squares: newSquares });
     }
 
     const {
       squares: newSquares,
       revealCount
     } = this.revealSelfAndEmptyNeighbors([...squares], row, column);
+    const newRevealsRemaining = revealsRemaining - revealCount;
+    const newGameOver = newRevealsRemaining === 0;
 
     this.setState({
-      squares: newSquares,
-      revealsRemaining: revealsRemaining - revealCount
+      gameOver: newGameOver,
+      revealsRemaining: newRevealsRemaining,
+      squares: newSquares
     });
   };
   onContextMenu = (event, row, column) => {
     event.preventDefault();
+
+    if (this.state.gameOver) return;
+
     const squares = [...this.state.squares];
 
-    if (squares[row][column].revealed) {
-      return;
-    }
+    if (squares[row][column].revealed) return;
 
     const { flagged } = squares[row][column];
     squares[row][column].flagged = !flagged;
@@ -42,12 +54,8 @@ export default class Board extends Component {
   }
   componentDidUpdate({ gameId: oldGameId }) {
     const { gameId } = this.props;
-    const { revealsRemaining } = this.state;
     if (gameId !== oldGameId) {
       return this.randomizeBoard();
-    }
-    if (revealsRemaining === 0) {
-      console.log("you win 😀");
     }
   }
   randomizeBoard() {
@@ -89,36 +97,7 @@ export default class Board extends Component {
       }
     }
     const revealsRemaining = height * width - bombsPlaced;
-    this.setState({ squares, revealsRemaining });
-  }
-  renderSquares() {
-    const { width } = this.props;
-    return (
-      <ul className={`width-${width}`}>
-        {this.state.squares.map((row, rowIndex) => {
-          return row.map((square, columnIndex) => {
-            return (
-              <li
-                key={`${rowIndex}.${columnIndex}`}
-                onClick={event => this.onClick(event, rowIndex, columnIndex)}
-                onContextMenu={event =>
-                  this.onContextMenu(event, rowIndex, columnIndex)
-                }
-                className={`value-${square.value} ${
-                  square.revealed ? "revealed" : ""
-                }`}
-              >
-                {square.revealed && square.value !== 0
-                  ? square.value
-                  : square.flagged
-                  ? "🚩"
-                  : "\u00A0"}
-              </li>
-            );
-          });
-        })}
-      </ul>
-    );
+    this.setState({ squares, revealsRemaining, gameOver: false });
   }
   revealSelfAndEmptyNeighbors(squares, row, column, revealCount = 0) {
     const isEmptySquare = squares[row][column].value === 0;
@@ -153,6 +132,28 @@ export default class Board extends Component {
     return { squares, revealCount };
   }
   render() {
-    return <div>{this.renderSquares()}</div>;
+    const { width } = this.props;
+    const { gameOver, revealsRemaining, squares } = this.state;
+    return (
+      <main>
+        <GameStatus gameOver={gameOver} revealsRemaining={revealsRemaining} />
+        <ul className={`width-${width}`}>
+          {squares.map((row, rowIndex) => {
+            return row.map((square, columnIndex) => {
+              return (
+                <Square
+                  key={`${rowIndex}.${columnIndex}`}
+                  onClick={event => this.onClick(event, rowIndex, columnIndex)}
+                  onContextMenu={event =>
+                    this.onContextMenu(event, rowIndex, columnIndex)
+                  }
+                  square={square}
+                />
+              );
+            });
+          })}
+        </ul>
+      </main>
+    );
   }
 }

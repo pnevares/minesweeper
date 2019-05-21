@@ -1,0 +1,50 @@
+ul > li {
+  display: flex;
+  height: 40px;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  background-color: #999;
+  border: 1px solid #fff;
+  border-radius: 5px;
+}
+
+ul > li.revealed {
+  background-color: #bbb;
+}
+
+ul > li.value-1 {
+  color: rgb(44, 44, 255);
+}
+
+ul > li.value-2 {
+  color: #0f0;
+}
+
+ul > li.value-3 {
+  color: #f00;
+}
+
+ul > li.value-4 {
+  color: rgb(0, 0, 158);
+}
+
+ul > li.value-5 {
+  color: rgb(143, 33, 0);
+}
+
+ul > li.value-6 {
+  color: rgb(0, 155, 202);
+}
+
+ul > li.value-7 {
+  color: #000;
+}
+
+ul > li.value-8 {
+  color: #777;
+}
+
+ul > li.value-💣.revealed {
+  background-color: #d55;
+}
