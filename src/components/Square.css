@@ -9,7 +9,13 @@ ul > li {
   border-radius: 5px;
 }
 
+main:not(.game-over) ul > li:not(.revealed):hover {
+  cursor: pointer;
+  background-color: #777;
+}
+
 ul > li.revealed {
+  cursor: default;
   background-color: #bbb;
 }
 

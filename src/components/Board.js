@@ -135,7 +135,7 @@ export default class Board extends Component {
     const { width } = this.props;
     const { gameOver, revealsRemaining, squares } = this.state;
     return (
-      <main>
+      <main className={gameOver ? "game-over" : ""}>
         <GameStatus gameOver={gameOver} revealsRemaining={revealsRemaining} />
         <ul className={`width-${width}`}>
           {squares.map((row, rowIndex) => {

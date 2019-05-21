@@ -2,4 +2,5 @@ body {
   font-family: sans-serif;
   display: flex;
   justify-content: center;
+  user-select: none;
 }
